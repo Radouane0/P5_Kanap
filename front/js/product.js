@@ -36,23 +36,36 @@ function ShowProduct(data) {
 const ButtonPanier = document.getElementById("addToCart")
 ButtonPanier.addEventListener("click", () => {
     const Color = document.getElementById("colors").value
-    const Quantite = document.getElementById("quantity").value
-    if (Color == "" || Quantite <1 || Quantite >100) {
+    const Quantity = document.getElementById("quantity").value
+    if (Color == "" || Quantity <1 || Quantity >100) {
         if (Color == "") {
             window.alert("Vous devez renseigner une couleur !")
         }
-        if (Quantite < 1 || Quantite > 100) {
+        if (Quantity < 1 || Quantity > 100) {
             window.alert("Vous devez renseigner une quantité entre 1 et 100 !")
         }
     }
-    else (AddCart(id, Color, Quantite))
+    else (AddCart(id, Color, Quantity))
    
 })
 
-function AddCart(id, Color, Quantite) {
+function AddCart(id, Color, Quantity) {
     console.log(id)
     console.log(Color)
-    console.log(Quantite)
+    console.log(Quantity)
+    let Cart = [];
+    let cartLine = {
+        id: id,
+        couleur: Color,
+        quantite: Quantity
+    }
+    Cart.push(cartLine)
+}
 
+function GetCart() {
+    localStorage.getItem("Cart")
+}
 
+function saveCart() {
+    localStorage.setItem("Cart", JSON.stringify(Cart))
 }
