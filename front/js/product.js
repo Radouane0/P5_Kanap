@@ -49,23 +49,22 @@ ButtonPanier.addEventListener("click", () => {
    
 })
 
-function AddCart(id, Color, Quantity) {
-    console.log(id)
-    console.log(Color)
-    console.log(Quantity)
-    let Cart = [];
-    let cartLine = {
-        id: id,
-        couleur: Color,
-        quantite: Quantity
-    }
-    Cart.push(cartLine)
+function saveCart(Cart) {
+    localStorage.setItem("Cart", JSON.stringify(Cart))
 }
 
 function GetCart() {
-    localStorage.getItem("Cart")
+    let Cart = localStorage.getItem("Cart")
+    if (Cart == null) {
+        return []
+    } else {
+        return JSON.parse(Cart)
+    }
 }
 
-function saveCart() {
-    localStorage.setItem("Cart", JSON.stringify(Cart))
+function AddCart(id, Color, Quantity) {
+    let Cart = GetCart()
+    Cart.push(id, Color, Quantity)
+    saveCart(Cart)
 }
+
