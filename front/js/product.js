@@ -64,7 +64,25 @@ function GetCart() {
 
 function AddCart(id, Color, Quantity) {
     let Cart = GetCart()
-    Cart.push(id, Color, Quantity)
+    let CartLine = {
+        Id: id,
+        Color: Color,
+        Quantity: parseInt(Quantity)
+    }
+    const indice = Cart.findIndex(kanap => (kanap.Id === id && kanap.Color === Color));
+    if (indice == -1) {
+        Cart.push(CartLine)
+        window.alert("Le produit a bien été ajouter au panier")
+    } else {
+        const Canape = Cart.find(kanap => (kanap.Id === id && kanap.Color === Color));
+        const Total = Canape.Quantity + parseInt(Quantity)
+        if (Total > 100) {
+            window.alert("Vous ne pouvez pas dépasser 100 !")
+        } else {
+            Canape.Quantity = Total
+            window.alert("Le produit a bien été ajouter au panier")
+        }
+    }
     saveCart(Cart)
 }
 
