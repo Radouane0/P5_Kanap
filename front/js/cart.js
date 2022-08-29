@@ -26,6 +26,35 @@ function ShowProductCart(data, Couleur) {
     Article.dataset.id = data._id
     Article.dataset.color = Couleur
     SectionCart.appendChild(Article)
+    
+    const DivImg = document.createElement("div")
+    DivImg.className = "cart__item__img"
+    Article.appendChild(DivImg)
+    const Image = document.createElement("img")
+    Image.src = data.imageUrl
+    Image.alt = data.altTxt
+    DivImg.appendChild(Image)
+
+    const DivContent = document.createElement("div")
+    DivContent.className = "cart__item__content"
+    Article.appendChild(DivContent)
+
+    const DivDescription = document.createElement("div")
+    DivDescription.className = "cart__item__content"
+    DivDescription.innerText = data.description
+    DivContent.appendChild(DivDescription)
+
+    const ProductName = document.createElement("h2")
+    ProductName.innerText = data.name
+    DivDescription.appendChild(ProductName)
+
+    const CouleurProduit = document.createElement("p")
+    CouleurProduit.innerText = CartLine.Color
+    DivDescription.appendChild(CouleurProduit)
+
+    const PrixProduit = document.createElement("p")
+    PrixProduit.innerText = data.price + "€"
+    DivDescription.appendChild(PrixProduit) 
 }
 
 
