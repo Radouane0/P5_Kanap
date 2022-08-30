@@ -14,11 +14,13 @@ async function ShowCart() {
     for (CartLine of Cart) {
         await fetch("http://localhost:3000/api/products/"+ CartLine.Id)
             .then(res => res.json())
-            .then(data => ShowProductCart(data, CartLine.Color))
+            .then(data => ShowProductCart(data, CartLine.Color, CartLine.Quantity))
     }
 }
 
-function ShowProductCart(data, Couleur) {
+
+
+function ShowProductCart(data, Couleur, Quantity) {
     console.log(data)
     const SectionCart = document.getElementById("cart__items")
     const Article = document.createElement("article")
@@ -40,7 +42,7 @@ function ShowProductCart(data, Couleur) {
     Article.appendChild(DivContent)
 
     const DivDescription = document.createElement("div")
-    DivDescription.className = "cart__item__content"
+    DivDescription.className = "cart__item__content__description"
     DivDescription.innerText = data.description
     DivContent.appendChild(DivDescription)
 
@@ -55,6 +57,36 @@ function ShowProductCart(data, Couleur) {
     const PrixProduit = document.createElement("p")
     PrixProduit.innerText = data.price + "€"
     DivDescription.appendChild(PrixProduit) 
+
+    const DivSettings = document.createElement("div")
+    DivSettings.className = "cart__item_content__settings"
+    DivContent.appendChild(DivSettings)
+
+    const DivQuantity = document.createElement("div")
+    DivQuantity.className = "cart__item__content__settings__quantity"
+    DivSettings.appendChild(DivQuantity)
+
+    const Qte = document.createElement("p")
+    Qte.innerText = "Qté : "
+    DivQuantity.appendChild(Qte)
+
+    const Input = document.createElement("input")
+    Input.type = "number"
+    Input.className = "itemQuantity"
+    Input.name = "itemQuantity"
+    Input.min = "1"
+    Input.max = "100"
+    Input.value = Quantity
+    DivQuantity.appendChild(Input)
+
+    const DivDelete = document.createElement("div")
+    DivDelete.className = "cart__item__content__settings__delete"
+    DivSettings.appendChild(DivDelete)
+
+    const Suppr = document.createElement("p")
+    Suppr.className = "deleteItem"
+    Suppr.innerText = "Supprimer"
+    DivDelete.appendChild(Suppr)
 }
 
 
@@ -62,24 +94,4 @@ function ShowProductCart(data, Couleur) {
 
 
 
-// <!--  <article class="cart__item" data-id="{product-ID}" data-color="{product-color}">
-//                 <div class="cart__item__img">
-//                   <img src="../images/product01.jpg" alt="Photographie d'un canapé">
-//                 </div>
-//                 <div class="cart__item__content">
-//                   <div class="cart__item__content__description">
-//                     <h2>Nom du produit</h2>
-//                     <p>Vert</p>
-//                     <p>42,00 €</p>
-//                   </div>
-//                   <div class="cart__item__content__settings">
-//                     <div class="cart__item__content__settings__quantity">
-//                       <p>Qté : </p>
-//                       <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="42">
-//                     </div>
-//                     <div class="cart__item__content__settings__delete">
-//                       <p class="deleteItem">Supprimer</p>
-//                     </div>
-//                   </div>
-//                 </div>
-//               </article> -->
+
