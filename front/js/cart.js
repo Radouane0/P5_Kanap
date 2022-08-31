@@ -89,6 +89,24 @@ function ShowProductCart(data, Couleur, Quantity) {
     DivDelete.appendChild(Suppr)
 }
 
+function RemoveFromCart(data) {
+    let deleteItem = document.querySelectorAll(".deleteItem")
+
+    for (let k = 0; k < deleteItem.length; k++) {
+        deleteItem[k].addEventListener("click", (event) => {
+            event.preventDefault()
+
+            Cart = CartLine.filter( el => el.data !== data.id)
+
+            localStorage.setItem("Cart", JSON.stringify(Cart))
+
+            alert("Votre article a bien été supprimé.")
+            window.location.href = "cart.html"
+            console.log(RemoveFromCart)
+        })
+    }
+}
+
 
 
 
