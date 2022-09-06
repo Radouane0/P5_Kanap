@@ -1,5 +1,9 @@
 ShowCart()
 
+function saveCart(Cart) {
+    localStorage.setItem("Cart", JSON.stringify(Cart))
+}
+
 function GetCart() {
     let Cart = localStorage.getItem("Cart")
     if (Cart == null) {
@@ -11,14 +15,19 @@ function GetCart() {
 
 async function ShowCart() {
     let Cart = GetCart()
+    Cart.sort((a, b) => {
+        if (a.Id < b.Id)
+            return -1;
+        if (a.Id > b.Id)
+            return 1;
+        return 0;
+    })
     for (CartLine of Cart) {
         await fetch("http://localhost:3000/api/products/"+ CartLine.Id)
             .then(res => res.json())
             .then(data => ShowProductCart(data, CartLine.Color, CartLine.Quantity))
     }
 }
-
-
 
 function ShowProductCart(data, Couleur, Quantity) {
     console.log(data)
@@ -43,7 +52,6 @@ function ShowProductCart(data, Couleur, Quantity) {
 
     const DivDescription = document.createElement("div")
     DivDescription.className = "cart__item__content__description"
-    DivDescription.innerText = data.description
     DivContent.appendChild(DivDescription)
 
     const ProductName = document.createElement("h2")
@@ -87,29 +95,32 @@ function ShowProductCart(data, Couleur, Quantity) {
     Suppr.className = "deleteItem"
     Suppr.innerText = "Supprimer"
     DivDelete.appendChild(Suppr)
+
+    Suppr.addEventListener("click", function(event) {
+        DeleteProduct(data._id, Couleur, Suppr)
+    })
+
+    Input.addEventListener("input", function(event) {
+        UpdateProduct(data._id, Couleur)
+    })
 }
 
-function RemoveFromCart(data) {
-    let deleteItem = document.querySelectorAll(".deleteItem")
-
-    for (let k = 0; k < deleteItem.length; k++) {
-        deleteItem[k].addEventListener("click", (event) => {
-            event.preventDefault()
-
-            Cart = CartLine.filter( el => el.data !== data.id)
-
-            localStorage.setItem("Cart", JSON.stringify(Cart))
-
-            alert("Votre article a bien été supprimé.")
-            window.location.href = "cart.html"
-            console.log(RemoveFromCart)
-        })
+function DeleteProduct(id, Couleur, Suppr) {
+    const Panier = GetCart()
+    for ( const data of Panier) {
+        if (id == data.Id && Couleur == data.Color) {
+            const RemoveArticle = Suppr.closest("article")
+            console.log(RemoveArticle)
+            RemoveArticle.parentElement.removeChild(RemoveArticle)
+            const indice = Panier.findIndex(data => (data.Id === id && data.Color === Couleur));
+            Panier.splice(indice, 1)
+            
+        }
     }
+    saveCart(Panier)
 }
 
-
-
-
-
-
+function UpdateProduct(id, Couleur) {
+    
+}
 
