@@ -27,6 +27,8 @@ async function ShowCart() {
             .then(res => res.json())
             .then(data => ShowProductCart(data, CartLine.Color, CartLine.Quantity))
     }
+    totalQuantity()
+    totalPrice()
 }
 
 function ShowProductCart(data, Couleur, Quantity) {
@@ -63,7 +65,7 @@ function ShowProductCart(data, Couleur, Quantity) {
     DivDescription.appendChild(CouleurProduit)
 
     const PrixProduit = document.createElement("p")
-    PrixProduit.innerText = data.price + "€"
+    PrixProduit.innerText = new Intl.NumberFormat("fr-FR").format(data.price) + "€"
     DivDescription.appendChild(PrixProduit) 
 
     const DivSettings = document.createElement("div")
@@ -98,16 +100,20 @@ function ShowProductCart(data, Couleur, Quantity) {
 
     Suppr.addEventListener("click", function(event) {
         DeleteProduct(data._id, Couleur, Suppr)
+        totalQuantity()
+        totalPrice()
     })
 
     Input.addEventListener("input", function(event) {
-        UpdateProduct(data._id, Couleur)
+        UpdateProduct(data._id, Couleur, event.target.value)
+        totalQuantity()
+        totalPrice()
     })
 }
 
 function DeleteProduct(id, Couleur, Suppr) {
     const Panier = GetCart()
-    for ( const data of Panier) {
+    for (const data of Panier) {
         if (id == data.Id && Couleur == data.Color) {
             const RemoveArticle = Suppr.closest("article")
             console.log(RemoveArticle)
@@ -120,7 +126,117 @@ function DeleteProduct(id, Couleur, Suppr) {
     saveCart(Panier)
 }
 
-function UpdateProduct(id, Couleur) {
-    
+function UpdateProduct(id, Couleur, newQuantity) {
+    const Panier = GetCart()
+    const indice = Panier.findIndex(data => (data.Id === id && data.Color === Couleur))
+    if (newQuantity < 1 || newQuantity > 100) {
+        alert("Veuillez saisir une quantité comprise entre 1 et 100.")
+    } else {
+        Panier[indice].Quantity = parseInt(newQuantity)
+        saveCart(Panier)
+    }
 }
 
+function totalQuantity() {
+    const Panier = GetCart()
+    let Total = 0
+    for (const data of Panier) {
+        Total += data.Quantity
+
+    }
+    document.getElementById("totalQuantity").innerText = Total
+}
+
+async function totalPrice() {
+    const Panier = GetCart()
+    let Total = 0
+    for (const data of Panier) {
+         await fetch("http://localhost:3000/api/products/"+ data.Id)
+            .then(res => res.json())
+            .then(Product => {
+                let TotalLigne = Product.price*data.Quantity
+                Total += TotalLigne
+            })
+    }
+    document.getElementById("totalPrice").innerText = new Intl.NumberFormat("fr-FR").format(Total)
+}
+
+function firstName() {
+    const Prenom = document.getElementById("firstName").value
+    const Error = document.getElementById("firstNameErrorMsg")
+    const Regex = /^[a-zA-ZáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ-]+$/
+    if (Prenom.match(Regex)) {
+        Error.innerText = ""
+        return true
+    } else {
+        Error.innerText = "Champ invalide."
+        return false
+    }
+}
+document.getElementById("firstName").addEventListener("input", () => {
+    firstName();
+  });
+
+function LastName() {
+    const Nom = document.getElementById("lastName").value
+    const Error = document.getElementById("lastNameErrorMsg")
+    const Regex = /^[a-zA-ZáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ-]+$/
+    if (Nom.match(Regex)) {
+        Error.innerText = ""
+        return true
+    } else {
+        Error.innerText = "Champ invalide."
+        return false
+    }
+}
+document.getElementById("lastName").addEventListener("input", () => {
+    LastName();
+  });
+
+function Address() {
+    const Adresse = document.getElementById("address").value
+    const Error = document.getElementById("addressErrorMsg")
+    const Regex = /^[a-zA-Zà-żÀ-Ż-0-9+\s+-]+$/
+    if (Adresse.match(Regex)) {
+        Error.innerText = ""
+        return true
+    } else {
+        Error.innerText = "Champ invalide."
+        return false
+    }
+}
+document.getElementById("address").addEventListener("input", () => {
+    Address();
+  });
+
+function City() {
+    const City = document.getElementById("city").value
+    const Error = document.getElementById("cityErrorMsg")
+    const Regex = /^[a-zA-Zà-żÀ-Ż\s+-]+$/
+    if (City.match(Regex)) {
+        Error.innerText = ""
+        return true
+    } else {
+        Error.innerText = "Champ invalide."
+        return false
+    }
+}
+document.getElementById("city").addEventListener("input", () => {
+    City();
+  });
+
+function Email() {
+    const Email = document.getElementById("email").value
+    const Error = document.getElementById("emailErrorMsg")
+    const Regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+    if (Email.match(Regex)) {
+        Error.innerText = ""
+        return true
+    } else {
+        Error.innerText = "Champ invalide."
+        return false
+    }
+}
+document.getElementById("email").addEventListener("input", () => {
+    Email();
+  });
