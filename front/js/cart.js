@@ -240,3 +240,15 @@ function Email() {
 document.getElementById("email").addEventListener("input", () => {
     Email();
   });
+
+function Commande() {
+    const btnCommande = document.getElementById("order")
+    btnCommande.addEventListener("click", (e) => {
+        e.preventDefault()
+        if (firstName.value == true && LastName.value == true && Address.value == true && City.value == true && Email.value == true) {
+            alert("Merci d'avoir commander !")
+        } else {
+
+        }  
+    })
+}
