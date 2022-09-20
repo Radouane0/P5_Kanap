@@ -23,7 +23,7 @@ async function ShowCart() {
         return 0;
     })
     for (CartLine of Cart) {
-        await fetch("http://localhost:3000/api/products/"+ CartLine.Id)
+        await fetch("http://localhost:3000/api/products/" + CartLine.Id)
             .then(res => res.json())
             .then(data => ShowProductCart(data, CartLine.Color, CartLine.Quantity))
     }
@@ -39,7 +39,7 @@ function ShowProductCart(data, Couleur, Quantity) {
     Article.dataset.id = data._id
     Article.dataset.color = Couleur
     SectionCart.appendChild(Article)
-    
+
     const DivImg = document.createElement("div")
     DivImg.className = "cart__item__img"
     Article.appendChild(DivImg)
@@ -66,7 +66,7 @@ function ShowProductCart(data, Couleur, Quantity) {
 
     const PrixProduit = document.createElement("p")
     PrixProduit.innerText = new Intl.NumberFormat("fr-FR").format(data.price) + "€"
-    DivDescription.appendChild(PrixProduit) 
+    DivDescription.appendChild(PrixProduit)
 
     const DivSettings = document.createElement("div")
     DivSettings.className = "cart__item_content__settings"
@@ -98,13 +98,13 @@ function ShowProductCart(data, Couleur, Quantity) {
     Suppr.innerText = "Supprimer"
     DivDelete.appendChild(Suppr)
 
-    Suppr.addEventListener("click", function(event) {
+    Suppr.addEventListener("click", function (event) {
         DeleteProduct(data._id, Couleur, Suppr)
         totalQuantity()
         totalPrice()
     })
 
-    Input.addEventListener("input", function(event) {
+    Input.addEventListener("input", function (event) {
         UpdateProduct(data._id, Couleur, event.target.value)
         totalQuantity()
         totalPrice()
@@ -120,7 +120,7 @@ function DeleteProduct(id, Couleur, Suppr) {
             RemoveArticle.parentElement.removeChild(RemoveArticle)
             const indice = Panier.findIndex(data => (data.Id === id && data.Color === Couleur));
             Panier.splice(indice, 1)
-            
+
         }
     }
     saveCart(Panier)
@@ -151,10 +151,10 @@ async function totalPrice() {
     const Panier = GetCart()
     let Total = 0
     for (const data of Panier) {
-         await fetch("http://localhost:3000/api/products/"+ data.Id)
+        await fetch("http://localhost:3000/api/products/" + data.Id)
             .then(res => res.json())
             .then(Product => {
-                let TotalLigne = Product.price*data.Quantity
+                let TotalLigne = Product.price * data.Quantity
                 Total += TotalLigne
             })
     }
@@ -175,7 +175,7 @@ function firstName() {
 }
 document.getElementById("firstName").addEventListener("input", () => {
     firstName();
-  });
+});
 
 function LastName() {
     const Nom = document.getElementById("lastName").value
@@ -191,7 +191,7 @@ function LastName() {
 }
 document.getElementById("lastName").addEventListener("input", () => {
     LastName();
-  });
+});
 
 function Address() {
     const Adresse = document.getElementById("address").value
@@ -207,7 +207,7 @@ function Address() {
 }
 document.getElementById("address").addEventListener("input", () => {
     Address();
-  });
+});
 
 function City() {
     const City = document.getElementById("city").value
@@ -223,7 +223,7 @@ function City() {
 }
 document.getElementById("city").addEventListener("input", () => {
     City();
-  });
+});
 
 function Email() {
     const Email = document.getElementById("email").value
@@ -239,16 +239,48 @@ function Email() {
 }
 document.getElementById("email").addEventListener("input", () => {
     Email();
-  });
+});
 
-function Commande() {
-    const btnCommande = document.getElementById("order")
-    btnCommande.addEventListener("click", (e) => {
-        e.preventDefault()
-        if (firstName.value == true && LastName.value == true && Address.value == true && City.value == true && Email.value == true) {
+
+const btnCommande = document.getElementById("order")
+btnCommande.addEventListener("click", (e) => {
+    e.preventDefault()
+    const Panier = GetCart()
+    if (Panier != 0) {
+        if (firstName() && LastName() && Address() && City() && Email()) {
+            const Contact = {
+                firstName: document.getElementById("firstName").value,
+                lastName: document.getElementById("lastName").value,
+                address: document.getElementById("address").value,
+                city: document.getElementById("city").value,
+                email: document.getElementById("email").value
+            }
+            const TabIdProducts = []
+            for (const data of Panier) {
+                TabIdProducts.push(data.Id)
+            }
+            const orderBody = {
+                contact : Contact,
+                products : TabIdProducts
+            }
+            fetch("http://localhost:3000/api/products/order", {
+                method: "POST",
+                body: JSON.stringify(orderBody),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(orderInfo => {
+                location.href = `./confirmation.html?id=${orderInfo.orderId}`
+            });
+
             alert("Merci d'avoir commander !")
         } else {
-
-        }  
-    })
-}
+            alert("Veuillez remplir le formulaire en entier !")
+        }
+    } else {
+        alert("Votre panier est vide !")
+    }
+})
