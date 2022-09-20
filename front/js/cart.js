@@ -1,21 +1,23 @@
 ShowCart()
 
+// Sauvegarde du panier dans le localStorage
 function saveCart(Cart) {
     localStorage.setItem("Cart", JSON.stringify(Cart))
 }
 
+// Fonction pour faire appel au panier
 function GetCart() {
     let Cart = localStorage.getItem("Cart")
     if (Cart == null) {
-        return []
+        return []      // Retourne un tableau vide
     } else {
-        return JSON.parse(Cart)
+        return JSON.parse(Cart)    // Retourne les éléments du panier convertis en objet dans un tableau
     }
 }
 
 async function ShowCart() {
     let Cart = GetCart()
-    Cart.sort((a, b) => {
+    Cart.sort((a, b) => {     // Tri par id des produits dans le panier
         if (a.Id < b.Id)
             return -1;
         if (a.Id > b.Id)
