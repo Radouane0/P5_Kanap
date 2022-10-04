@@ -1,13 +1,20 @@
-// Faire le lien entre un produit de la page d'accueil et la page Produit
-const url =  window.location.search;
-const urlSearchParams = new URLSearchParams(url)
-const id = urlSearchParams.get("id")
-console.log(id)
+fetchProduct()
 
-// Afficher le produit selectionné grâce à son id
-fetch("http://localhost:3000/api/products/"+ id)
-    .then(res => res.json())
-    .then(data => ShowProduct(data))
+function GetIdProduct() {
+    // Faire le lien entre un produit de la page d'accueil et la page Produit
+    const url =  window.location.search;
+    const urlSearchParams = new URLSearchParams(url)
+    const id = urlSearchParams.get("id")
+    return id
+}
+
+function fetchProduct() {
+    const id = GetIdProduct()
+    // Afficher le produit selectionné grâce à son id
+    fetch("http://localhost:3000/api/products/"+ id)
+        .then(res => res.json())
+        .then(data => ShowProduct(data))
+}
 
 // Ajout des informations du produit affiché (image, nom, description, prix...) dans le DOM
 function ShowProduct(data) {
@@ -49,7 +56,7 @@ ButtonPanier.addEventListener("click", () => {    // Création d'un évenement d
             window.alert("Vous devez renseigner une quantité entre 1 et 100 !")
         }
     }
-    else (AddCart(id, Color, Quantity))    // Ajoute l'id, la couleur et la quantité d'un produit dans le panier
+    else (AddCart(GetIdProduct(), Color, Quantity))    // Ajoute l'id, la couleur et la quantité d'un produit dans le panier
    
 })
 

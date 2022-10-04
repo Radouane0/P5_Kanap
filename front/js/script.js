@@ -1,4 +1,4 @@
-// Méthode fetch qui permet de récupérer les éléments de l'API
+// Créer une requête pour récupérer les données de l'API
 fetch("http://localhost:3000/api/products")
     .then(res => res.json())
     .then(data => ShowProducts(data))
@@ -9,7 +9,7 @@ function ShowProducts(data) {
         console.log(Product)
         const SectionProducts = document.getElementById("items")
         const BaliseA = document.createElement("a")
-        BaliseA.href = `./product.html?id=${Product._id}`
+        BaliseA.href = `./product.html?id=${Product._id}`  // Affichage de l'id du produit sélectionné dans l'URL
         SectionProducts.appendChild(BaliseA)
 
         const Article = document.createElement("article")

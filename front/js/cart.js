@@ -71,7 +71,7 @@ function ShowProductCart(data, Couleur, Quantity) {
     DivDescription.appendChild(PrixProduit)
 
     const DivSettings = document.createElement("div")
-    DivSettings.className = "cart__item_content__settings"
+    DivSettings.className = "cart__item__content__settings"
     DivContent.appendChild(DivSettings)
 
     const DivQuantity = document.createElement("div")
@@ -100,27 +100,29 @@ function ShowProductCart(data, Couleur, Quantity) {
     Suppr.innerText = "Supprimer"
     DivDelete.appendChild(Suppr)
 
-    Suppr.addEventListener("click", function (event) {
+    Suppr.addEventListener("click", function (event) {        // Ajout d'un évenement au clic du bouton "SUPPRIMER"
         DeleteProduct(data._id, Couleur, Suppr)
         totalQuantity()
         totalPrice()
     })
 
-    Input.addEventListener("input", function (event) {
+    Input.addEventListener("input", function (event) {         // Ajout d'un évenement au changement de la quantité d'un produit
         UpdateProduct(data._id, Couleur, event.target.value)
         totalQuantity()
         totalPrice()
     })
 }
 
-function DeleteProduct(id, Couleur, Suppr) {
+
+// Suppression d'un produit du panier
+function DeleteProduct(id, Couleur, Suppr) { 
     const Panier = GetCart()
     for (const data of Panier) {
         if (id == data.Id && Couleur == data.Color) {
             const RemoveArticle = Suppr.closest("article")
             console.log(RemoveArticle)
             RemoveArticle.parentElement.removeChild(RemoveArticle)
-            const indice = Panier.findIndex(data => (data.Id === id && data.Color === Couleur));
+            const indice = Panier.findIndex(data => (data.Id === id && data.Color === Couleur));  
             Panier.splice(indice, 1)
 
         }
@@ -128,6 +130,7 @@ function DeleteProduct(id, Couleur, Suppr) {
     saveCart(Panier)
 }
 
+// Mis à jour de la quantité du produit changée depuis le panier
 function UpdateProduct(id, Couleur, newQuantity) {
     const Panier = GetCart()
     const indice = Panier.findIndex(data => (data.Id === id && data.Color === Couleur))
@@ -139,6 +142,7 @@ function UpdateProduct(id, Couleur, newQuantity) {
     }
 }
 
+// Calcul du total des produits dans le panier
 function totalQuantity() {
     const Panier = GetCart()
     let Total = 0
@@ -149,6 +153,7 @@ function totalQuantity() {
     document.getElementById("totalQuantity").innerText = Total
 }
 
+// Calcul du prix total du panier qui se lance après le calcul de la quantité total (voir ci-dessus)
 async function totalPrice() {
     const Panier = GetCart()
     let Total = 0
@@ -246,10 +251,10 @@ document.getElementById("email").addEventListener("input", () => {
 
 const btnCommande = document.getElementById("order")
 btnCommande.addEventListener("click", (e) => {
-    e.preventDefault()
+    e.preventDefault()   // Empêcher la page de se rafraîchir dès que l'on clic sur le bouton sans remplir les champs
     const Panier = GetCart()
     if (Panier != 0) {
-        if (firstName() && LastName() && Address() && City() && Email()) {
+        if (firstName() && LastName() && Address() && City() && Email()) {   // Vérifie si tous les champs sont remplis correctement
             const Contact = {
                 firstName: document.getElementById("firstName").value,
                 lastName: document.getElementById("lastName").value,
@@ -259,7 +264,7 @@ btnCommande.addEventListener("click", (e) => {
             }
             const TabIdProducts = []
             for (const data of Panier) {
-                TabIdProducts.push(data.Id)
+                TabIdProducts.push(data.Id)  // Mettre dans un tableau les id des produits achetés
             }
             const orderBody = {
                 contact : Contact,
@@ -275,7 +280,7 @@ btnCommande.addEventListener("click", (e) => {
             })
             .then(response => response.json())
             .then(orderInfo => {
-                location.href = `./confirmation.html?id=${orderInfo.orderId}`
+                location.href = `./confirmation.html?id=${orderInfo.orderId}`  // Redirection vers la page confirmation
             });
 
             alert("Merci d'avoir commander !")
